@@ -209,6 +209,17 @@ func ClangFilterUnknownCflags(cflags []string) []string {
 	return ret
 }
 
+func ClangFilterUnknownLldflags(lldflags []string) []string {
+	ret := make([]string, 0, len(lldflags))
+	for _, f := range lldflags {
+		if !inListSorted(f, ClangUnknownLldflags) {
+			ret = append(ret, f)
+		}
+	}
+
+	return ret
+}
+
 func inListSorted(s string, list []string) bool {
 	for _, l := range list {
 		if s == l {
