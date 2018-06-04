@@ -116,8 +116,8 @@ var (
 		blueprint.RuleParams{
 			Depfile:     "${out}.d",
 			Deps:        blueprint.DepsGCC,
-			Command:     "CROSS_COMPILE=$crossCompile $stripPath ${args} -i ${in} -o ${out} -d ${out}.d",
-			CommandDeps: []string{"$stripPath"},
+			Command:     "CROSS_COMPILE=$crossCompile XZ=$xzCmd CLANG_BIN=${config.ClangBin} $stripPath ${args} -i ${in} -o ${out} -d ${out}.d",
+			CommandDeps: []string{"$stripPath", "$xzCmd"},
 		},
 		"args", "crossCompile")
 
@@ -255,8 +255,8 @@ type builderFlags struct {
 	stripKeepSymbols       bool
 	stripKeepMiniDebugInfo bool
 	stripAddGnuDebuglink   bool
-
 	quicksilver bool
+	stripUseLlvmStrip      bool
 }
 
 type Objects struct {
@@ -871,6 +871,9 @@ func TransformStrip(ctx android.ModuleContext, inputFile android.Path,
 	}
 	if flags.stripKeepSymbols {
 		args += " --keep-symbols"
+	}
+	if flags.stripUseLlvmStrip {
+		args += " --use-llvm-strip"
 	}
 
 	ctx.Build(pctx, android.BuildParams{
