@@ -83,10 +83,17 @@ var ClangUnknownCflags = sorted([]string{
 	"--enable-stdcall-fixup",
 })
 
-var ClangLibToolingUnknownCflags = []string{
-	"-flto*",
-	"-fsanitize*",
-}
+// Ldflags that should be filtered out when linking with clang lld
+var ClangUnknownLldflags = sorted([]string{
+	"-fuse-ld=gold",
+	"-Wl,--fix-cortex-a8",
+	"-Wl,--no-fix-cortex-a8",
+	"-Wl,-m,aarch64_elf64_le_vec",
+})
+
+var ClangLibToolingUnknownCflags = sorted([]string{
+	"-fno-sanitize=implicit-integer-sign-change",
+})
 
 func init() {
 	pctx.StaticVariable("ClangExtraCflags", strings.Join([]string{
